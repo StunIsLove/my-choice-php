@@ -9,7 +9,7 @@ use R as ORM;
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\RedException\SQL;
 
-class UserService extends MainActiveRecord
+class UserService
 {
     public const TABLE_NAME = 'users';
 
@@ -41,9 +41,9 @@ class UserService extends MainActiveRecord
     /**
      * @param array $fields
      *
-     * @return OODBBean|null
+     * @return array|null
      */
-    public function getUserForAuth(array $fields): ?OODBBean
+    public function getUserForAuth(array $fields): ?array
     {
         $user = null;
 
@@ -60,6 +60,6 @@ class UserService extends MainActiveRecord
                 [$fields[self::FIELD_EMAIL]]);
         }
 
-        return $user;
+        return $user ? MainActiveRecord::OODBToArray($user) : null;
     }
 }

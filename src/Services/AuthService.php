@@ -9,14 +9,12 @@ use R as ORM;
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\RedException\SQL;
 
-class AuthService extends MainActiveRecord
+class AuthService
 {
     public const TABLE_NAME = 'auth';
 
-    public const FIELD_ID             = 'id';
-    public const FIELD_EMAIL          = 'email';
-    public const FIELD_PASSWORD       = 'password';
-    public const FIELD_ACCOUNT_NUMBER = 'accountNumber';
+    public const FIELD_ID    = 'id';
+    public const FIELD_TOKEN = 'token';
 
     /**
      * @param int    $userId
@@ -37,12 +35,14 @@ class AuthService extends MainActiveRecord
     }
 
     /**
-     * @param array $userId
+     * @param int $userId
      *
-     * @return OODBBean|null
+     * @return array|null
      */
-    public function getTokenByUserId(array $userId): ?OODBBean
+    public function getTokenByUserId(int $userId): ?array
     {
-        return ORM::findOne(self::TABLE_NAME, ' WHERE user_id = ?', [$userId]) ?? null;
+        $result = ORM::findOne(self::TABLE_NAME, ' WHERE user_id = ?', [$userId]) ?? null;
+
+        return $result ? MainActiveRecord::OODBToArray($result) : null;
     }
 }

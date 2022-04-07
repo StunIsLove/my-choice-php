@@ -5,42 +5,47 @@ namespace App\Controllers;
 
 use App\Services\AuthService;
 use App\Services\UserService;
+use Exception;
 use RedBeanPHP\RedException\SQL;
+use Tokenly\TokenGenerator\TokenGenerator;
 
-class UserController
+class UserController extends ResponseController
 {
     /**
      * @param string   $email
      * @param string   $password
      * @param int|null $accountNumber
      *
-     * @return int
+     * @return string
      * @throws SQL
      */
-    public function register(string $email, string $password, ?int $accountNumber): int
+    public function register(string $email, string $password, ?int $accountNumber): string
     {
         $userService = new UserService();
 
-        return $userService->create(
+        $userId = $userService->create(
             $email,
             md5(md5($password)),
             $accountNumber
         );
+
+        return parent::returnSuccess(['userId' => $userId]);
     }
 
     /**
      * @param string $login
      * @param string $password
      *
-     * @return array
+     * @return string
      * @throws SQL
+     * @throws Exception
      */
-    public function auth(string $login, string $password): array
+    public function auth(string $login, string $password): string
     {
-        $isEmail = strstr($login, '@');
-        $isEmail ? $email = $login : $accountNumber = $login;
-
         $userService = new UserService();
+
+        $isEmail = strstr($login, '@');
+        $isEmail ? $email = $login : $accountNumber = (int)$login;
 
         $user = $userService->getUserForAuth([
             UserService::FIELD_ACCOUNT_NUMBER => $accountNumber ?? null,
@@ -48,24 +53,27 @@ class UserController
             UserService::FIELD_PASSWORD       => $password,
         ]);
 
-        if (!empty($user) && $password === $user[UserService::FIELD_PASSWORD]) {
+        if (!empty($user) && md5(md5($password)) === $user[UserService::FIELD_PASSWORD]) {
+            $userId = (int)$user[UserService::FIELD_ID];
             $authService = new AuthService();
 
-            $token = $authService->getTokenByUserId($user[UserService::FIELD_ID]);
+            $token = $authService->getTokenByUserId($userId);
 
-            if (empty($token))
-            {
-                // todo: Подключить генератор строк
-                $generatedToken = 'testToken715';
-                $newTokenId = $authService->createToken($user[UserService::FIELD_ID], $generatedToken);
+            if (empty($token)) {
+                $tokenGenerator = new TokenGenerator();
+
+                $generatedToken = $tokenGenerator->generateToken(20, 'KEY');
+                $newTokenId = $authService->createToken($userId, $generatedToken);
                 if (!empty($newTokenId)) {
-                    return ['response' => ['token' => $newTokenId]];
+                    return parent::returnSuccess(['user' => $user, 'token' => $generatedToken]);
                 } else {
-                    return ['error' => "Token doesn't record"];
+                    return parent::returnError(400, "Token doesn't record");
                 }
+            } else {
+                return parent::returnSuccess(['user' => $user, 'token' => $token[AuthService::FIELD_TOKEN]]);
             }
         }
 
-        return ['error' => 'Access denied'];
+        return parent::returnError(400, 'Access denied');
     }
 }
