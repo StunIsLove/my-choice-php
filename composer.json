@@ -1,0 +1,11 @@
+{
+    "name": "developer/my-choice-php",
+    "require": {
+        "altorouter/altorouter": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Developer\\MyChoicePhp\\": "src/"
+        }
+    }
+}
