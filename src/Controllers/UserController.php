@@ -29,15 +29,22 @@ class UserController
     }
 
     /**
+     * @param string $login
+     * @param string $password
+     *
+     * @return array
      * @throws SQL
      */
-    public function auth(string $email, string $password, ?int $accountNumber): array
+    public function auth(string $login, string $password): array
     {
+        $isEmail = strstr($login, '@');
+        $isEmail ? $email = $login : $accountNumber = $login;
+
         $userService = new UserService();
 
         $user = $userService->getUserForAuth([
-            UserService::FIELD_ACCOUNT_NUMBER => $accountNumber,
-            UserService::FIELD_EMAIL          => $email,
+            UserService::FIELD_ACCOUNT_NUMBER => $accountNumber ?? null,
+            UserService::FIELD_EMAIL          => $email ?? null,
             UserService::FIELD_PASSWORD       => $password,
         ]);
 
