@@ -10,7 +10,7 @@ class AuthView
                     <head>
                         <meta charset="utf-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1">
-                        <title style="text-decoration: underline; text-decoration-style: dotted;">Аторизация</title>
+                        <title style="text-decoration: underline; text-decoration-style: dotted;">Авторизация</title>
                         <link rel="icon" href="/src/Static/LogoIcon.png">
                         <!-- Bootstrap core CSS -->
                         <link href="https://getbootstrap.com/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -24,26 +24,20 @@ class AuthView
                     <main class="form-signin">
                         <form>
                             <img class="mb-4" src="/src/Static/Logo.jpg" alt="" width="300">
-                            <h1 class="h3 mb-3 fw-normal"><b>Домовёнок, </br>приветсвует Вас!</b></h1>
+                            <h1 class="h3 mb-3 fw-normal"><b>Домовёнок </br>приветсвует Вас!</b></h1>
                     
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                                <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
                                 <label for="floatingInput">Укажите Номер ЛС или email</label>
                             </div>
-                            <div class="form-floating">
+                            <div class="form-floating" style="padding-top: 5px; padding-bottom: 15px">
                                 <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
                                 <label for="floatingPassword">Введите пароль</label>
                             </div>
-                    
-                            <div class="checkbox mb-3">
-                                <label>
-                                    <input type="checkbox" value="remember-me"> Запомнить
-                                </label>
-                            </div>
                             <button class="w-100 btn btn-lg btn-primary" type="submit"
-                                    style="background-color: #0D6E83;border-color: #0D6E83">Войти
+                                    style="background-color: #0D6E83;border-color: #0D6E83;">Войти
                             </button>
-                            <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+                            <p class="mt-3 mb-3 text-muted">&copy; 2022</p>
                         </form>
                     </main>
                     
