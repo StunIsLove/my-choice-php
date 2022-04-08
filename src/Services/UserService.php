@@ -26,7 +26,7 @@ class UserService
      * @return int|null
      * @throws SQL
      */
-    public function create(string $email, string $password, ?int $accountNumber): ?int
+    public function createUser(string $email, string $password, ?int $accountNumber): ?int
     {
         /* @var UserModel $user */
         $user = ORM::dispense(self::TABLE_NAME);

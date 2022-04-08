@@ -6,15 +6,15 @@ namespace App\Services;
 use App\Models\AuthModel;
 use App\Modules\MainActiveRecord;
 use R as ORM;
-use RedBeanPHP\OODBBean;
 use RedBeanPHP\RedException\SQL;
 
 class AuthService
 {
     public const TABLE_NAME = 'auth';
 
-    public const FIELD_ID    = 'id';
-    public const FIELD_TOKEN = 'token';
+    public const FIELD_ID      = 'id';
+    public const FIELD_USER_ID = 'user_id';
+    public const FIELD_TOKEN   = 'token';
 
     /**
      * @param int    $userId
@@ -44,5 +44,17 @@ class AuthService
         $result = ORM::findOne(self::TABLE_NAME, ' WHERE user_id = ?', [$userId]) ?? null;
 
         return $result ? MainActiveRecord::OODBToArray($result) : null;
+    }
+
+    /**
+     * @param $token
+     *
+     * @return int|null
+     */
+    public function validateToken($token): ?int
+    {
+        $result = ORM::findOne(self::TABLE_NAME, ' WHERE token = ?', [$token]) ?? null;
+
+        return $result ? (int)$result[self::FIELD_USER_ID] : null;
     }
 }

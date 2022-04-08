@@ -16,31 +16,35 @@ class UserController extends ResponseController
      * @param string   $password
      * @param int|null $accountNumber
      *
-     * @return string
+     * @return void
      * @throws SQL
      */
-    public function register(string $email, string $password, ?int $accountNumber): string
+    public function register(string $email, string $password, ?int $accountNumber): void
     {
         $userService = new UserService();
 
-        $userId = $userService->create(
+        $userId = $userService->createUser(
             $email,
             md5(md5($password)),
             $accountNumber
         );
 
-        return parent::returnSuccess(['userId' => $userId]);
+        if (empty($userId)) {
+            parent::returnError(500, "User doesn't record");
+        }
+
+        parent::returnSuccess(['userId' => $userId]);
     }
 
     /**
      * @param string $login
      * @param string $password
      *
-     * @return string
+     * @return void
      * @throws SQL
      * @throws Exception
      */
-    public function auth(string $login, string $password): string
+    public function auth(string $login, string $password): void
     {
         $userService = new UserService();
 
@@ -65,15 +69,15 @@ class UserController extends ResponseController
                 $generatedToken = $tokenGenerator->generateToken(20, 'KEY');
                 $newTokenId = $authService->createToken($userId, $generatedToken);
                 if (!empty($newTokenId)) {
-                    return parent::returnSuccess(['user' => $user, 'token' => $generatedToken]);
+                    parent::returnSuccess(['user' => $user, 'token' => $generatedToken]);
                 } else {
-                    return parent::returnError(400, "Token doesn't record");
+                    parent::returnError(500, "Token doesn't record");
                 }
             } else {
-                return parent::returnSuccess(['user' => $user, 'token' => $token[AuthService::FIELD_TOKEN]]);
+                parent::returnSuccess(['user' => $user, 'token' => $token[AuthService::FIELD_TOKEN]]);
             }
         }
 
-        return parent::returnError(400, 'Access denied');
+        parent::returnError(400, 'Access denied');
     }
 }
